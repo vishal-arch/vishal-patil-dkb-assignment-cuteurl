@@ -5,9 +5,9 @@ spring:
     active: ${ACTIVE_SPRING_PROFILE:local}
 
   flyway:
-    schemas: ${SCHEMA:urlshortener}
+    schemas: ${SCHEMA:urlstore}
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?currentSchema=${SCHEMA:urlshortener}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?currentSchema=${SCHEMA:urlstore}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
   jpa:
