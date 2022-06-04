@@ -1,0 +1,40 @@
+server:
+  port: 8086
+spring:
+  profiles:
+    active: ${ACTIVE_SPRING_PROFILE:local}
+
+  flyway:
+    schemas: ${SCHEMA:urlshortener}
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?currentSchema=${SCHEMA:urlshortener}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        show-sql: false
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+
+springdoc:
+  default-produces-media-type: application/json
+  show-actuator: true
+  override-with-generic-response: false
+  pathsToMatch:
+    - /v1/**
+  swagger-ui.path: /v3/swagger-ui.html
+
+
+
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web.exposure.include: info, health, metrics, prometheus
