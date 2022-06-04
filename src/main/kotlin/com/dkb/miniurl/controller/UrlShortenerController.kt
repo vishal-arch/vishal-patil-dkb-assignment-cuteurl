@@ -1,7 +1,7 @@
-package com.dkb.cuteurl.controller
+package com.dkb.miniurl.controller
 
-import com.dkb.cuteurl.business.services.UrlShortenerService
-import com.dkb.cuteurl.controller.request.ShortenedUrlRequest
+import com.dkb.miniurl.business.services.UrlShortenerService
+import com.dkb.miniurl.controller.request.ShortenedUrlRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody

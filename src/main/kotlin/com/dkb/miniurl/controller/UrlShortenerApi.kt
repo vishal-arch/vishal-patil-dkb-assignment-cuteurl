@@ -1,7 +1,7 @@
-package com.dkb.cuteurl.controller
+package com.dkb.miniurl.controller
 
-import com.dkb.cuteurl.controller.UrlShortenerApi.UrlConstant.API_PATH
-import com.dkb.cuteurl.controller.request.ShortenedUrlRequest
+import com.dkb.miniurl.controller.UrlShortenerApi.UrlConstant.API_PATH
+import com.dkb.miniurl.controller.request.ShortenedUrlRequest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.ExampleObject

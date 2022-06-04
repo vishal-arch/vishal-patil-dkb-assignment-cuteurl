@@ -1,4 +1,4 @@
-package com.dkb.cuteurl.controller
+package com.dkb.miniurl.controller
 
 import org.springframework.web.bind.annotation.ControllerAdvice
 
