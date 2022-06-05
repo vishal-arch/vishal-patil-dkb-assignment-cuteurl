@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -95,8 +96,36 @@ interface UrlShortenerApi {
      *
      * @param shortUrl The short url passed as an input
      */
+    @Operation(
+        summary = "The Api is used to redirect user to the Actual Url page for the input ShortUrl",
+        responses = [ApiResponse(
+            responseCode = "302",
+            description = "Response of the Api is a redirection to the actual Url"
+        ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Response provided if the passed shortUrl is incorrect with and no record is found in the System",
+                content = [Content(
+                    schema = Schema(implementation = ExceptionController.ErrorObject::class),
+                    mediaType = APPLICATION_JSON_VALUE,
+                    examples = [
+                        ExampleObject(
+                            name = "An example response if entity is not found",
+                            // language=json
+                            value = """
+                                {
+                                  "title":"Error while searching for a not existing entity",
+                                  "details":"Cannot redirect for Url <ShortUrl>"
+                                }
+                                
+                            """
+                        )
+                    ]
+                )]
+            )]
+    )
     @GetMapping("/{shortUrl}")
-    fun getActualRedirectUrl(@PathVariable shortUrl: String): ResponseEntity<Void> = ResponseEntity
+    fun redirectUrl(@PathVariable shortUrl: String): ResponseEntity<Void> = ResponseEntity
         .status(HttpStatus.NOT_IMPLEMENTED)
         .build()
 }

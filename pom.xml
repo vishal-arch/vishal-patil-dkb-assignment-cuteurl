@@ -56,8 +56,6 @@
 		</dependency>
 
 		<!-- tools & utilities -->
-
-
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
@@ -96,6 +94,16 @@
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
 			<version>${logstash-logback-encoder.version}</version>
+		</dependency>
+
+		<!-- Validator -->
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator-annotation-processor</artifactId>
 		</dependency>
 
 		<!-- tests -->

@@ -17,4 +17,10 @@ interface UrlShortenerRepository : JpaRepository<UrlMetadata, Long> {
      */
     fun findByHash(hash: String): UrlMetadata?
 
+    /**
+     * The method fetches the UrlMetadata details for the shortUrl passed
+     * @param shortUrl, This is the shortUrl from the request
+     * @return null or the [UrlMetadata] found in the DB
+     */
+    fun findByShortUrl(shortUrl:String) : UrlMetadata?
 }

@@ -9,6 +9,7 @@ import org.mapstruct.factory.Mappers
 import org.springframework.stereotype.Service
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
+import javax.persistence.EntityNotFoundException
 
 /**
  * This is a Service class that has methods related to Shortening and Fetching the actual redirect URL.
@@ -48,8 +49,26 @@ class UrlShortenerService(val urlShortenerRepository: UrlShortenerRepository) {
 
     }
 
+    /**
+     * The method returns the Actual Url for the shortUrl passed
+     * @param shortenedUrl from the api request
+     * @return longUrl that the user would be redirected to
+     */
+    fun getActualRedirectUrl(shortenedUrl: String): String {
+
+        var urlMetadata = getUrlDetailsByShortUrl(shortenedUrl)
+        return urlMetadata.longUrl
+    }
+
     private fun getUrlDetails(hash: String): UrlMetadata? {
         return urlShortenerRepository.findByHash(hash)
+    }
+
+    private fun getUrlDetailsByShortUrl(shortUrl: String): UrlMetadata {
+
+        return urlShortenerRepository.findByShortUrl(shortUrl)
+            ?: throw EntityNotFoundException("Cannot redirect for Url ${shortUrl}")
+
     }
 
     private fun decodeUrl(shortenedUrlRequest: ShortenedUrlRequest) {
@@ -57,8 +76,5 @@ class UrlShortenerService(val urlShortenerRepository: UrlShortenerRepository) {
             URLDecoder.decode(shortenedUrlRequest.url, StandardCharsets.UTF_8);
     }
 
-    fun getActualRedirectUrl(shortenedUrl: String): String {
-        return "http://google.com";
-    }
 
 }
