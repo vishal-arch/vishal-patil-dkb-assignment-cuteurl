@@ -1,3 +1,5 @@
 package com.dkb.miniurl.controller.request
 
-data class ShortenedUrlRequest(var url: String)
+import com.dkb.miniurl.controller.validator.ValidUrl
+
+data class ShortenedUrlRequest(@ValidUrl var url: String)

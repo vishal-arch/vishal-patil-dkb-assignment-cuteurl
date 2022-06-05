@@ -1,10 +1,10 @@
-package com.dkb.cuteurl
+package com.dkb.miniurl
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class CuteurlApplicationTests {
+class MiniurlApplicationTests {
 
 	@Test
 	fun contextLoads() {

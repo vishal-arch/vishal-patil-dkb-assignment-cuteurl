@@ -1,37 +1,64 @@
 package com.dkb.miniurl.business.services
 
+import com.dkb.miniurl.business.entities.UrlMetadata
+import com.dkb.miniurl.business.repositories.UrlShortenerRepository
 import com.dkb.miniurl.controller.request.ShortenedUrlRequest
+import com.dkb.miniurl.controller.response.ShortenedUrlResponse
 import com.dkb.miniurl.mapper.UrlMapper
-import com.dkb.miniurl.util.DateUtils
 import org.mapstruct.factory.Mappers
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 /**
  * This is a Service class that has methods related to Shortening and Fetching the actual redirect URL.
  */
 @Service
-class UrlShortenerService {
+class UrlShortenerService(val urlShortenerRepository: UrlShortenerRepository) {
 
     val mapper = Mappers.getMapper(UrlMapper::class.java)
-    val URL_EXPIRATION_DAYS = 2L
-    fun convertToShortUrl(shortenedUrlRequest: ShortenedUrlRequest):String{
 
+    /**
+     *  The method is responsible to convert & persist the Long Url passed in the request to shortenedUrl
+     *  The flow of how the method works is as follows
+     *  1) Decodes the reuest URL
+     *  2) Generates HashCode and check if the record exiists in the DB with the hashcode
+     *  3) If found, return the Mapped response
+     *  4) If not found, Maps the [ShortenedUrlRequest] to [UrlMetadata] saves the DB and returns the Mapped response
+     *
+     *  @param shortenedUrlRequest [ShortenedUrlRequest] with input request Url.
+     *  @param baseUrl, The base URL of the request
+     *  @return the method returns the mapped [ShortenedUrlResponse]
+     */
+    fun convertToShortUrl(
+        shortenedUrlRequest: ShortenedUrlRequest,
+        baseUrl: String
+    ): ShortenedUrlResponse {
+
+        decodeUrl(shortenedUrlRequest)
         val urlMetadata = mapper.toUrlMetaData(shortenedUrlRequest)
-        urlMetadata.expirationTimestamp = getExpirationDate()
-        return "";
+        var fetchedUrlMetadata = getUrlDetails(urlMetadata.hash)
+
+        return fetchedUrlMetadata?.run {
+            mapper.toShortenedUrlResponse(fetchedUrlMetadata, baseUrl)
+        } ?: run {
+            val persistedUrlMetadata = urlShortenerRepository.save(urlMetadata)
+            return mapper.toShortenedUrlResponse(persistedUrlMetadata, baseUrl);
+        }
+
     }
 
-    private fun getExpirationDate(): LocalDateTime{
-        return DateUtils.addDaysToTs(URL_EXPIRATION_DAYS, LocalDateTime.now())
+    private fun getUrlDetails(hash: String): UrlMetadata? {
+        return urlShortenerRepository.findByHash(hash)
     }
 
-    fun getActualRedirectUrl(shortenedUrl: String):String{
+    private fun decodeUrl(shortenedUrlRequest: ShortenedUrlRequest) {
+        shortenedUrlRequest.url =
+            URLDecoder.decode(shortenedUrlRequest.url, StandardCharsets.UTF_8);
+    }
 
+    fun getActualRedirectUrl(shortenedUrl: String): String {
         return "http://google.com";
     }
-
-
-
 
 }

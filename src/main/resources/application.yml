@@ -16,6 +16,7 @@ spring:
     properties:
       hibernate:
         show-sql: false
+        format_sql: false
         jdbc:
           lob:
             non_contextual_creation: true
@@ -28,9 +29,6 @@ springdoc:
   pathsToMatch:
     - /v1/**
   swagger-ui.path: /v3/swagger-ui.html
-
-
-
 
 management:
   endpoint:

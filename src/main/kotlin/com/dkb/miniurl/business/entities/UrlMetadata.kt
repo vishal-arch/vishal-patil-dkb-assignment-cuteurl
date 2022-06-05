@@ -2,12 +2,14 @@ package com.dkb.miniurl.business.entities
 
 import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
-@Table(name="urlmetadata")
-data class UrlMetadata (
+@Table(name = "urlmetadata")
+@EntityListeners(AuditingEntityListener::class)
+data class UrlMetadata(
 
     @Id
     @SequenceGenerator(
@@ -18,12 +20,9 @@ data class UrlMetadata (
     var id: Long,
     var hash: String,
     var longUrl: String,
-    var shortUrl: String,
-    var expirationTimestamp: LocalDateTime?,
+    var shortUrl: String = "",
     @CreatedDate
-    var creationTimestamp: LocalDateTime?,
+    var creationTimestamp: LocalDateTime? = null,
     @UpdateTimestamp
-    var updationTimestamp: LocalDateTime?
-){
-    constructor():this(0L,"","","",null,null,null)
-}
+    var updationTimestamp: LocalDateTime? = null
+)

@@ -2,6 +2,7 @@ package com.dkb.miniurl.controller
 
 import com.dkb.miniurl.controller.UrlShortenerApi.UrlConstant.API_PATH
 import com.dkb.miniurl.controller.request.ShortenedUrlRequest
+import com.dkb.miniurl.controller.response.ShortenedUrlResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.ExampleObject
@@ -16,8 +17,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import javax.servlet.http.HttpServletRequest
 
-@Tag(name = "Url Shortener", description = "Api's for shortening and de-shortening of URL's")
+@Tag(name = "Api details", description = "Api's for encoding(shortening) and decoding of URL's")
 @RequestMapping(API_PATH)
 interface UrlShortenerApi {
 
@@ -30,14 +32,33 @@ interface UrlShortenerApi {
      * The method creates a Shortened URL for the long URL passed
      *
      * @param request [ShortenedUrlRequest] containing the Long URL
+     * @param httpRequest [HttpServletRequest]
      * @return the Shortened URL
      */
     @Operation(
         summary = "The Api represents a shortening of a Url provided.",
         responses = [ApiResponse(
-            responseCode = "201",
-            description = "Response with newly created shortened Url",
-            content = arrayOf(Content(schema = Schema(implementation = String::class)))
+            responseCode = "200",
+            description = "Response with newly created shortened Url, Please use the attribute miniurl from the response",
+            content = [Content(
+                schema = Schema(implementation = ShortenedUrlResponse::class),
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                examples = [
+                    ExampleObject(
+                        name = "Response received",
+                        //language = "json"
+                        value = """
+                            {
+                                "requestedUrl": "http://www.requesturl.io",
+                                "hash": "95c049a3084ab35d430631304782ccff902c4f6600c2e61e11f6b0f691560c64",
+                                "alias": "Dh2Ze47",
+                                "createdAt": "2022-06-05T17:20:57.850965+05:30",
+                                "miniurl": "http://localhost:8086/Dh2Ze47"
+                            }
+                        """
+                    )
+                ]
+            )]
         )],
         requestBody = RequestBody(
             required = true,
@@ -45,23 +66,26 @@ interface UrlShortenerApi {
                 Content(
                     schema = Schema(implementation = ShortenedUrlRequest::class),
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    examples = arrayOf(
+                    examples = [
                         ExampleObject(
                             name = "An example request for creating a shortened Url .",
                             // language=json
                             value = """
                                 {
-                                  "url": "http://localhost:8080/abcd2"
+                                  "url": "http://www.requesturl.io"
                                 }
                             """
                         )
-                    )
+                    ]
                 )
             )
         )
     )
     @PostMapping
-    fun createShortenedUrl(request: ShortenedUrlRequest): ResponseEntity<String> = ResponseEntity
+    fun createShortenedUrl(
+        request: ShortenedUrlRequest,
+        httpRequest: HttpServletRequest
+    ): ResponseEntity<ShortenedUrlResponse> = ResponseEntity
         .status(HttpStatus.NOT_IMPLEMENTED)
         .build()
 
