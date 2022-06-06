@@ -57,7 +57,8 @@ class UrlShortenerControllerTest(
     @Test
     fun shouldRedirectToActualUrl() {
 
-        `when`(urlShortenerService.getActualRedirectUrl(anyString())).thenReturn("http://abc.com")
+        val urlResponse = ShortenedUrlResponse("","","",ZonedDateTime.now(),"")
+        `when`(urlShortenerService.getActualRedirectUrl(anyString())).thenReturn(urlResponse)
 
         val builder = MockMvcRequestBuilders.get(URI+"/shortcode")
             .accept(MediaType.APPLICATION_JSON)

@@ -39,7 +39,7 @@ class UrlShortenerController(private val urlShortenerService: UrlShortenerServic
      */
     override fun redirectUrl(@Valid @Pattern(regexp = "^[A-Za-z0-9]+\$") @PathVariable shortUrl: String): ResponseEntity<Void> {
         return ResponseEntity.status(HttpStatus.FOUND)
-            .location(URI(urlShortenerService.getActualRedirectUrl(shortUrl)))
+            .location(URI(urlShortenerService.getActualRedirectUrl(shortUrl).requestedUrl))
             .build();
     }
 

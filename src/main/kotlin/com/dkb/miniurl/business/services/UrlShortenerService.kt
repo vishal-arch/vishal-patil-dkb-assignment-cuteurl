@@ -65,14 +65,14 @@ class UrlShortenerService(
     /**
      * The method returns the Actual Url for the shortUrl passed
      * @param shortenedUrl from the api request
-     * @return longUrl that the user would be redirected to
+     * @return [ShortenedUrlResponse] with longUrl that the user would be redirected to.
      */
     @Cacheable(value = ["RedirectUrlCache"], key = "#shortenedUrl")
-    fun getActualRedirectUrl(shortenedUrl: String): String {
+    fun getActualRedirectUrl(shortenedUrl: String): ShortenedUrlResponse {
 
         var urlMetadata = getUrlDetailsByShortUrl(shortenedUrl)
         incrementCounter(shortenedUrl)
-        return urlMetadata.longUrl
+        return mapper.toShortenedUrlResponse(urlMetadata, "");
     }
 
     private fun getUrlDetails(hash: String): UrlMetadata? {

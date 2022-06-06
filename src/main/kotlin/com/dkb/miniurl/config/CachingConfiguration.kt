@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets
  */
 @Configuration
 @EnableCaching
-class CacheConfiguration {
+class CachingConfiguration {
 
     @Bean
     fun customKeyGenerator(): KeyGenerator {

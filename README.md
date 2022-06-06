@@ -35,6 +35,8 @@ DB_PORT:                    The DB port (default 5432)
 DB_SCHEMA:                  The DB schema 
 DB_USERNAME:                The DB username
 DB_PASSWORD:                The DB password
+REDIS_HOST:                 The Redis Cache manager hostname 
+REDIS_PORT:                 The Redis Cache manager port (default 6379)
 ```
 Locally these environment variables can be set through Run -> Edit Configurations in the IDE
 ## REST
