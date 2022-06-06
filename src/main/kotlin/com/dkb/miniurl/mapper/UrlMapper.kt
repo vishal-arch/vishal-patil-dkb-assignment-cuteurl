@@ -1,6 +1,7 @@
 package com.dkb.miniurl.mapper
 
 import com.dkb.miniurl.business.entities.UrlMetadata
+import com.dkb.miniurl.controller.UrlShortenerApi
 import com.dkb.miniurl.controller.request.ShortenedUrlRequest
 import com.dkb.miniurl.controller.response.ShortenedUrlResponse
 import com.dkb.miniurl.util.DateUtils
@@ -13,7 +14,7 @@ import java.nio.charset.StandardCharsets
 
 @Mapper(
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
-    imports = [UrlHasher::class, StandardCharsets::class, DateUtils::class, UrlEncoderDecoder::class]
+    imports = [UrlHasher::class, StandardCharsets::class, DateUtils::class, UrlEncoderDecoder::class, UrlShortenerApi::class]
 )
 interface UrlMapper {
     /**
@@ -35,7 +36,7 @@ interface UrlMapper {
     /**
      * The method maps [UrlMetadata] to [ShortenedUrlResponse]
      * @param [UrlMetadata] entity
-     * @param baseUrl, the base reuest Url
+     * @param baseUrl, the base request Url
      * @return [ShortenedUrlResponse]
      */
     @Mapping(target = "requestedUrl", source = "urlMetadata.longUrl")
@@ -44,6 +45,9 @@ interface UrlMapper {
         target = "createdAt",
         expression = "java(DateUtils.INSTANCE.toZonedDateTime(urlMetadata.getCreationTimestamp()))"
     )
-    @Mapping(target = "miniurl", expression = "java(baseUrl+urlMetadata.getShortUrl())")
+    @Mapping(
+        target = "miniurl",
+        expression = "java(baseUrl+UrlShortenerApi.UrlConstant.API_PATH+\"/\"+urlMetadata.getShortUrl())"
+    )
     fun toShortenedUrlResponse(urlMetadata: UrlMetadata, baseUrl: String): ShortenedUrlResponse
 }

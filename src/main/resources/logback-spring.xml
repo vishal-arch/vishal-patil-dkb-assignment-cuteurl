@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Default JSON format (no pretty-print).
+-->
+
+<configuration>
+    <springProfile name="prod">
+        <appender name="jsonConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <jsonFactoryDecorator
+                  class="com.dkb.miniurl.config.LogstashJavaTimeModuleDecorator"/>
+                <throwableConverter
+                    class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                    <maxDepthPerThrowable>30</maxDepthPerThrowable>
+                    <maxLength>8192</maxLength>
+                    <shortenedClassNameLength>20</shortenedClassNameLength>
+                    <exclude>sun\.reflect\..*\.invoke.*</exclude>
+                    <exclude>net\.sf\.cglib\.proxy\.MethodProxy\.invoke</exclude>
+                    <rootCauseFirst>true</rootCauseFirst>
+                </throwableConverter>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="jsonConsoleAppender"/>
+        </root>
+    </springProfile>
+    <springProfile name="!prod">
+        <appender name="textConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="textConsoleAppender"/>
+        </root>
+    </springProfile>
+</configuration>

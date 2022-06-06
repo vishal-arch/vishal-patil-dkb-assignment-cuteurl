@@ -5,6 +5,7 @@ import com.dkb.miniurl.business.repositories.UrlShortenerRepository
 import com.dkb.miniurl.controller.request.ShortenedUrlRequest
 import com.dkb.miniurl.controller.response.ShortenedUrlResponse
 import com.dkb.miniurl.mapper.UrlMapper
+import org.hibernate.annotations.common.util.impl.LoggerFactory
 import org.mapstruct.factory.Mappers
 import org.springframework.stereotype.Service
 import java.net.URLDecoder
@@ -16,6 +17,8 @@ import javax.persistence.EntityNotFoundException
  */
 @Service
 class UrlShortenerService(val urlShortenerRepository: UrlShortenerRepository) {
+
+    val logger = LoggerFactory.logger(UrlShortenerService::class.java)
 
     val mapper = Mappers.getMapper(UrlMapper::class.java)
 
@@ -44,6 +47,7 @@ class UrlShortenerService(val urlShortenerRepository: UrlShortenerRepository) {
             mapper.toShortenedUrlResponse(fetchedUrlMetadata, baseUrl)
         } ?: run {
             val persistedUrlMetadata = urlShortenerRepository.save(urlMetadata)
+            logger.info("New shortUrl persisted. shortUrl generate is ${persistedUrlMetadata.shortUrl} ")
             return mapper.toShortenedUrlResponse(persistedUrlMetadata, baseUrl);
         }
 
@@ -67,7 +71,10 @@ class UrlShortenerService(val urlShortenerRepository: UrlShortenerRepository) {
     private fun getUrlDetailsByShortUrl(shortUrl: String): UrlMetadata {
 
         return urlShortenerRepository.findByShortUrl(shortUrl)
-            ?: throw EntityNotFoundException("Cannot redirect for Url ${shortUrl}")
+            ?: run {
+                logger.info("The shortUrl passed not found,Cannot redirect for Url ${shortUrl}")
+                throw EntityNotFoundException("Cannot redirect for Url ${shortUrl}")
+            }
 
     }
 

@@ -1,6 +1,7 @@
 package com.dkb.miniurl.mapper
 
 import com.dkb.miniurl.business.entities.UrlMetadata
+import com.dkb.miniurl.controller.UrlShortenerApi
 import com.dkb.miniurl.controller.request.ShortenedUrlRequest
 import com.dkb.miniurl.util.UrlEncoderDecoder
 import com.dkb.miniurl.util.UrlHasher
@@ -44,7 +45,7 @@ class UrlMapperTest {
         assertThat(response).isNotNull
         assertThat(response.requestedUrl).isEqualTo(url)
         assertThat(response.alias).isNotNull
-        assertThat(response.miniurl).isEqualTo(baseUrl + response.alias)
+        assertThat(response.miniurl).isEqualTo(baseUrl + UrlShortenerApi.UrlConstant.API_PATH+"/" + response.alias)
         assertThat(response.createdAt).isNotNull
 
     }

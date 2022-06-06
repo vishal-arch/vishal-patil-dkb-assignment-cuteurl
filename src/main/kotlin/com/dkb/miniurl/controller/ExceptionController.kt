@@ -1,6 +1,8 @@
 package com.dkb.miniurl.controller
 
 import com.fasterxml.jackson.core.JsonProcessingException
+import org.hibernate.annotations.common.util.impl.LoggerFactory
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -17,6 +19,8 @@ import javax.servlet.http.HttpServletRequest
  */
 @ControllerAdvice
 class ExceptionController {
+
+    val logger = LoggerFactory.logger(ExceptionController::class.java)
 
     data class ErrorObject(
         var title: String = "",
@@ -41,7 +45,7 @@ class ExceptionController {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(value = [MethodArgumentNotValidException::class, JsonProcessingException::class])
+    @ExceptionHandler(value = [MethodArgumentNotValidException::class, DataIntegrityViolationException::class, JsonProcessingException::class])
     fun handleInputException(
         exception: Exception,
         request: HttpServletRequest
@@ -72,7 +76,7 @@ class ExceptionController {
     }
 
     private fun commonErrorLogging(requestUri: String, exp: Exception) {
-        //Log here
+        logger.error("Exception happened at {$requestUri}", exp)
     }
 
 }

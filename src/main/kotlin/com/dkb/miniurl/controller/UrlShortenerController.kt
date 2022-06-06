@@ -46,6 +46,6 @@ class UrlShortenerController(private val urlShortenerService: UrlShortenerServic
     private fun getURLBase(request: HttpServletRequest): String {
         val requestURL = URL(request.requestURL.toString())
         val port = if (requestURL.port == -1) "" else ":" + requestURL.getPort()
-        return (requestURL.getProtocol() + "://" + requestURL.getHost()).toString() + port + "/"
+        return (requestURL.getProtocol() + "://" + requestURL.getHost()).toString() + port
     }
 }

@@ -2,7 +2,7 @@ package com.dkb.miniurl.business.services
 
 import com.dkb.miniurl.business.entities.UrlMetadata
 import com.dkb.miniurl.business.repositories.UrlShortenerRepository
-import com.dkb.miniurl.business.services.UrlShortenerService
+import com.dkb.miniurl.controller.UrlShortenerApi
 import com.dkb.miniurl.controller.request.ShortenedUrlRequest
 import com.dkb.miniurl.controller.response.ShortenedUrlResponse
 import com.dkb.miniurl.util.UrlEncoderDecoder
@@ -57,7 +57,7 @@ class UrlShortenerServiceTest {
     }
 
     @Test
-    fun shouldGetRedirectUrl(){
+    fun shouldGetRedirectUrl() {
 
         val urlMetadata =
             UrlMetadata(
@@ -73,7 +73,7 @@ class UrlShortenerServiceTest {
     }
 
     @Test
-    fun shouldThrowEntityNotFound(){
+    fun shouldThrowEntityNotFound() {
 
         assertThrows<EntityNotFoundException> {
             urlShortenerService.getActualRedirectUrl("DXSD")
@@ -85,7 +85,7 @@ class UrlShortenerServiceTest {
         assertThat(response).isNotNull
         assertThat(response.requestedUrl).isEqualTo(url)
         assertThat(response.alias).isNotNull
-        assertThat(response.miniurl).isEqualTo(baseUrl + response.alias)
+        assertThat(response.miniurl).isEqualTo(baseUrl + UrlShortenerApi.UrlConstant.API_PATH + "/" + response.alias)
         assertThat(response.createdAt).isNotNull
 
     }
