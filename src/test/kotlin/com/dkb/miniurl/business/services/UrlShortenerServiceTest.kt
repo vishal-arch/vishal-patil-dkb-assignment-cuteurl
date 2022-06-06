@@ -5,8 +5,10 @@ import com.dkb.miniurl.business.repositories.UrlShortenerRepository
 import com.dkb.miniurl.controller.UrlShortenerApi
 import com.dkb.miniurl.controller.request.ShortenedUrlRequest
 import com.dkb.miniurl.controller.response.ShortenedUrlResponse
+import com.dkb.miniurl.metrics.UrlShorteningMetrics
 import com.dkb.miniurl.util.UrlEncoderDecoder
 import com.dkb.miniurl.util.UrlHasher
+import io.micrometer.core.instrument.MeterRegistry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -19,7 +21,8 @@ class UrlShortenerServiceTest {
     val url = "http://testservice.com"
     val baseUrl = "http://baseurl.com/"
     val urlShortenerRepository = mock(UrlShortenerRepository::class.java)
-    val urlShortenerService = UrlShortenerService(urlShortenerRepository)
+    val urlShorteningMetrics = mock(UrlShorteningMetrics::class.java)
+    val urlShortenerService = UrlShortenerService(urlShortenerRepository,urlShorteningMetrics)
 
     @Test
     fun shouldSaveUrlMetadata() {

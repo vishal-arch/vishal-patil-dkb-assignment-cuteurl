@@ -5,6 +5,7 @@ import com.dkb.miniurl.business.repositories.UrlShortenerRepository
 import com.dkb.miniurl.controller.request.ShortenedUrlRequest
 import com.dkb.miniurl.controller.response.ShortenedUrlResponse
 import com.dkb.miniurl.mapper.UrlMapper
+import com.dkb.miniurl.metrics.UrlShorteningMetrics
 import org.hibernate.annotations.common.util.impl.LoggerFactory
 import org.mapstruct.factory.Mappers
 import org.springframework.stereotype.Service
@@ -16,7 +17,10 @@ import javax.persistence.EntityNotFoundException
  * This is a Service class that has methods related to Shortening and Fetching the actual redirect URL.
  */
 @Service
-class UrlShortenerService(val urlShortenerRepository: UrlShortenerRepository) {
+class UrlShortenerService(
+    val urlShortenerRepository: UrlShortenerRepository,
+    val urlShorteningMetrics: UrlShorteningMetrics
+) {
 
     val logger = LoggerFactory.logger(UrlShortenerService::class.java)
 
@@ -47,6 +51,7 @@ class UrlShortenerService(val urlShortenerRepository: UrlShortenerRepository) {
             mapper.toShortenedUrlResponse(fetchedUrlMetadata, baseUrl)
         } ?: run {
             val persistedUrlMetadata = urlShortenerRepository.save(urlMetadata)
+            createCountMetrics(persistedUrlMetadata.shortUrl)
             logger.info("New shortUrl persisted. shortUrl generate is ${persistedUrlMetadata.shortUrl} ")
             return mapper.toShortenedUrlResponse(persistedUrlMetadata, baseUrl);
         }
@@ -61,6 +66,7 @@ class UrlShortenerService(val urlShortenerRepository: UrlShortenerRepository) {
     fun getActualRedirectUrl(shortenedUrl: String): String {
 
         var urlMetadata = getUrlDetailsByShortUrl(shortenedUrl)
+        incrementCounter(shortenedUrl)
         return urlMetadata.longUrl
     }
 
@@ -83,5 +89,12 @@ class UrlShortenerService(val urlShortenerRepository: UrlShortenerRepository) {
             URLDecoder.decode(shortenedUrlRequest.url, StandardCharsets.UTF_8);
     }
 
+    private fun createCountMetrics(tag: String) {
+        urlShorteningMetrics.createCounterMetricsForLinkClicked(tag)
+    }
+
+    private fun incrementCounter(tag: String) {
+        urlShorteningMetrics.incrementLinkClickedCounter(tag)
+    }
 
 }
