@@ -99,13 +99,13 @@ class UrlShortenerRepositoryTest(@Autowired var urlShortenerRepository: UrlShort
 
     private fun assertUrlMetadata(urlMetadata: UrlMetadata?) {
 
-        assertThat(urlMetadata).isNotNull()
-        assertThat(urlMetadata?.id).isNotNull()
-        assertThat(urlMetadata?.hash).isNotNull()
+        assertThat(urlMetadata).isNotNull
+        assertThat(urlMetadata?.id).isNotNull
+        assertThat(urlMetadata?.hash).isNotNull
         assertThat(urlMetadata?.hash).isEqualTo(UrlHasher.hashString(url))
-        assertThat(urlMetadata?.shortUrl).isNotNull()
+        assertThat(urlMetadata?.shortUrl).isNotNull
         assertThat(urlMetadata?.longUrl).isEqualTo(url)
-        assertThat(urlMetadata?.creationTimestamp).isNotNull()
+        assertThat(urlMetadata?.creationTimestamp).isNotNull
 
     }
 }
