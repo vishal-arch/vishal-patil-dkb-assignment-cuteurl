@@ -8,15 +8,18 @@ import com.dkb.miniurl.mapper.UrlMapper
 import com.dkb.miniurl.metrics.UrlShorteningMetrics
 import org.hibernate.annotations.common.util.impl.LoggerFactory
 import org.mapstruct.factory.Mappers
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import javax.persistence.EntityNotFoundException
+import javax.transaction.Transactional
 
 /**
  * This is a Service class that has methods related to Shortening and Fetching the actual redirect URL.
  */
 @Service
+@Transactional
 class UrlShortenerService(
     val urlShortenerRepository: UrlShortenerRepository,
     val urlShorteningMetrics: UrlShorteningMetrics
@@ -38,6 +41,7 @@ class UrlShortenerService(
      *  @param baseUrl, The base URL of the request
      *  @return the method returns the mapped [ShortenedUrlResponse]
      */
+    @Cacheable(value = ["urlMetadataCache"], keyGenerator = "customKeyGenerator")
     fun convertToShortUrl(
         shortenedUrlRequest: ShortenedUrlRequest,
         baseUrl: String
@@ -63,6 +67,7 @@ class UrlShortenerService(
      * @param shortenedUrl from the api request
      * @return longUrl that the user would be redirected to
      */
+    @Cacheable(value = ["RedirectUrlCache"], key = "#shortenedUrl")
     fun getActualRedirectUrl(shortenedUrl: String): String {
 
         var urlMetadata = getUrlDetailsByShortUrl(shortenedUrl)
