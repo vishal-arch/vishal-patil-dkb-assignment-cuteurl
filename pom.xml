@@ -126,13 +126,6 @@
 			<version>${testcontainers.postgresql.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.redis.testcontainers</groupId>
-			<artifactId>testcontainers-redis-junit</artifactId>
-			<version>1.5.5</version>
-			<scope>test</scope>
-		</dependency>
-
 
 	</dependencies>
 
