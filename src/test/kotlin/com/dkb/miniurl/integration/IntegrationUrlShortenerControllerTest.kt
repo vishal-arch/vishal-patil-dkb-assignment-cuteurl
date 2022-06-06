@@ -16,17 +16,24 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.context.ApplicationContextInitializer
+import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.support.TestPropertySourceUtils
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.utility.DockerImageName
 import java.net.URI
 
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
+@ContextConfiguration(initializers = [com.dkb.miniurl.integration.IntegrationUrlShortenerControllerTest.Initializer::class])
 class IntegrationUrlShortenerControllerTest(
     @Autowired
     val repository: UrlShortenerRepository,
@@ -97,5 +104,25 @@ class IntegrationUrlShortenerControllerTest(
         assertThat(urlMetadata?.longUrl).isEqualTo(url)
         assertThat(urlMetadata?.creationTimestamp).isNotNull
 
+    }
+
+    class Initializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
+        override fun initialize(applicationContext: ConfigurableApplicationContext) {
+
+            var redis = GenericContainer(
+                DockerImageName.parse("redis:latest")
+            ).withExposedPorts(6379)
+
+            redis.start()
+
+            val redisContainerIP = "spring.redis.host=" + redis.containerIpAddress
+            val redisContainerPort =
+                "spring.redis.port=" + redis.getMappedPort(6379)
+            TestPropertySourceUtils.addInlinedPropertiesToEnvironment(
+                applicationContext,
+                redisContainerIP,
+                redisContainerPort
+            )
+        }
     }
 }
